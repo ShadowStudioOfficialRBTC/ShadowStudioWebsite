@@ -24,11 +24,11 @@
                 <p class="chat-lede">A small studio-built assistant for big questions, quick ideas, and curious detours.</p>
                 <div class="model-status" id="modelStatus" role="status" aria-live="polite">
                     <span class="status-dot" aria-hidden="true"></span>
-                    <span id="statusText">Loading browser model...</span>
+                    <span id="statusText">Workspace model ready to load...</span>
                 </div>
-                <div class="asset-list" aria-label="Browser model status">
-                    <div><span>Tokenizer</span><strong id="tokenizerState">browser</strong></div>
-                    <div><span>ONNX model</span><strong id="adapterState">waiting</strong></div>
+                <div class="asset-list" aria-label="Workspace model status">
+                    <div><span>Model</span><strong id="tokenizerState">workspace</strong></div>
+                    <div><span>Weights</span><strong id="adapterState">workspace</strong></div>
                     <div><span>Runtime</span><strong id="dataState">waiting</strong></div>
                 </div>
             </aside>
@@ -38,7 +38,7 @@
                     <div class="shadow-avatar" aria-hidden="true">S</div>
                     <div>
                         <strong>Shadow</strong>
-                        <span><i></i> browser studio assistant</span>
+                        <span><i></i> workspace model assistant</span>
                     </div>
                     <button class="clear-chat" id="clearChat" type="button">Clear</button>
                 </div>

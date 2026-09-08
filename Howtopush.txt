@@ -7,6 +7,5 @@ git commit -m "Update complete website with AI integration"
 # 3. Push the new commit to GitHub
 git push origin main
 
-# Vercel model server setup
-# Set SHADOW_MODEL_SERVER in Vercel to the public URL of the Python model server.
-# Keep model_server.py running on a host that supports PyTorch and Qwen, then redeploy.
+# The chatbot serves its browser model from models/Qwen2.5-0.5B-Instruct-ONNX.
+# Deploy the complete models directory with the website.

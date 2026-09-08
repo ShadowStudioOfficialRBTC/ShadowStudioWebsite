@@ -1,6 +1,6 @@
 import { env, pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2/+esm";
 
-const MODEL_ID = "onnx-community/Qwen2.5-0.5B-Instruct-ONNX";
+const MODEL_PATH = "./models/Qwen2.5-0.5B-Instruct-ONNX";
 const messages = document.querySelector("#messages");
 const form = document.querySelector("#chatForm");
 const input = document.querySelector("#chatInput");
@@ -14,9 +14,9 @@ const assetStates = {
 let generator;
 let loadingPromise;
 
-env.allowLocalModels = false;
+env.allowLocalModels = true;
+env.allowRemoteModels = false;
 env.useBrowserCache = true;
-
 function setAssetState(name, value, isReady) {
     assetStates[name].textContent = value;
     assetStates[name].classList.toggle("is-ready", isReady);
@@ -27,11 +27,12 @@ function setStatus(text, isReady = false) {
     modelStatus.classList.toggle("is-ready", isReady);
 }
 
-async function loadBrowserModel() {
+async function loadWorkspaceModel(onProgress = () => {}) {
     if (generator) return generator;
     if (loadingPromise) return loadingPromise;
     loadingPromise = (async () => {
-        setStatus("Downloading browser model · first load may take a moment...");
+        onProgress("Loading model files from this server...");
+        setStatus("Loading workspace model files...");
         setAssetState("model", "loading", false);
         setAssetState("runtime", "starting", false);
         let device = "wasm";
@@ -43,17 +44,15 @@ async function loadBrowserModel() {
                 device = "wasm";
             }
         }
-        try {
-            generator = await pipeline("text-generation", MODEL_ID, { device, dtype: "q4" });
-        } catch (error) {
-            if (device !== "wasm") {
-                setStatus("WebGPU unavailable · switching to browser CPU...");
-                generator = await pipeline("text-generation", MODEL_ID, { device: "wasm", dtype: "q4" });
-                device = "wasm";
-            } else {
-                throw error;
+        generator = await pipeline("text-generation", MODEL_PATH, {
+            device,
+            dtype: "q4",
+            progress_callback: (progress) => {
+                if (progress.status === "progress" && progress.progress) {
+                    onProgress(`Loading model files from this server... ${Math.round(progress.progress)}%`);
+                }
             }
-        }
+        });
         setAssetState("model", "loaded", true);
         setAssetState("runtime", device, true);
         setStatus(`Shadow is ready · running in browser (${device})`, true);
@@ -63,7 +62,7 @@ async function loadBrowserModel() {
         return await loadingPromise;
     } catch (error) {
         loadingPromise = undefined;
-        setStatus("Browser model could not load");
+        setStatus("Workspace model could not load");
         throw error;
     }
 }
@@ -81,22 +80,28 @@ function addMessage(text, sender) {
 async function replyTo(prompt) {
     const pending = document.createElement("article");
     pending.className = "message message-shadow message-pending";
-    pending.innerHTML = '<div class="message-label">Shadow <time>now</time></div><p>Thinking...</p>';
+    pending.innerHTML = '<div class="message-label">Shadow <time>now</time></div><p>Loading model on server...</p>';
     messages.append(pending);
     messages.scrollTop = messages.scrollHeight;
 
     try {
-        const model = await loadBrowserModel();
+        const model = await loadWorkspaceModel((progress) => {
+            pending.querySelector("p").textContent = progress;
+        });
         const output = await model(`<|im_start|>system\nYou are Shadow, a helpful AI assistant created by ShadowStudios.<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`, {
-            max_new_tokens: 180, do_sample: true, temperature: 0.7, top_p: 0.9, return_full_text: false
+            max_new_tokens: 180,
+            do_sample: true,
+            temperature: 0.7,
+            top_p: 0.9,
+            return_full_text: false
         });
         const reply = output[0]?.generated_text?.trim();
-        if (!reply) throw new Error("The browser model returned an empty reply");
+        if (!reply) throw new Error("The workspace model returned an empty reply");
         pending.remove();
         addMessage(reply, "shadow");
     } catch (error) {
         pending.remove();
-        addMessage(`I could not load the browser model. ${error.message}`, "shadow");
+        addMessage(`I could not load the workspace model. ${error.message}`, "shadow");
     }
 }
 
@@ -122,4 +127,4 @@ clearChat.addEventListener("click", () => {
     input.focus();
 });
 
-loadBrowserModel().catch(() => {});
+setStatus("Workspace model ready to load · send a message to begin");
