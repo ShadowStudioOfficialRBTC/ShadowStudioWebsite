@@ -41,10 +41,14 @@ async function loadLocalAssets() {
 
     try {
         const response = await fetch(`${modelServer}/api/health`);
-        if (!response.ok) throw new Error("Model runtime unavailable");
+        const responseText = await response.text();
+        const result = responseText ? JSON.parse(responseText) : {};
+        if (!response.ok) throw new Error(result.error || "Model runtime unavailable");
         statusText.textContent = "Shadow is ready · running on server";
     } catch (error) {
-        statusText.textContent = "The Shadow server is unavailable";
+        statusText.textContent = error.message.includes("SHADOW_MODEL_SERVER")
+            ? "Configure SHADOW_MODEL_SERVER in Vercel"
+            : "The Shadow server is unavailable";
         modelStatus.classList.remove("is-ready");
     }
 }

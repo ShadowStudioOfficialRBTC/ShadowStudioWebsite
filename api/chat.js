@@ -6,7 +6,9 @@ export default async function handler(request, response) {
 
     const server = process.env.SHADOW_MODEL_SERVER;
     if (!server) {
-        return response.status(503).json({ error: "SHADOW_MODEL_SERVER is not configured" });
+        return response.status(503).json({
+            error: "SHADOW_MODEL_SERVER is missing. Add it in Vercel Project Settings > Environment Variables."
+        });
     }
 
     try {
