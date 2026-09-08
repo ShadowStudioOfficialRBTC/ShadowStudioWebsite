@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../RecipiesGPTFineTuned"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "ShadowStudios"
+	}
+}

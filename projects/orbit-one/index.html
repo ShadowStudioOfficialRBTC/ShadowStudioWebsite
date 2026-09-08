@@ -55,16 +55,26 @@
                 <h2>Download the build.</h2>
             </div>
             <div class="download-list">
-                <a href="main.py" download><span>Python source</span><strong>main.py &#8595;</strong></a>
-                <a href="requirements.txt" download><span>Dependencies</span><strong>requirements.txt &#8595;</strong></a>
-                <a href="LICENSE" download><span>License</span><strong>LICENSE &#8595;</strong></a>
+                <a class="download-link" href="main.py" download><span>Python source</span><strong>main.py &#8595;</strong></a>
+                <a class="download-link" href="requirements.txt" download><span>Dependencies</span><strong>requirements.txt &#8595;</strong></a>
+                <a class="download-link" href="LICENSE" download><span>License</span><strong>LICENSE &#8595;</strong></a>
             </div>
         </aside>
     </main>
 
     <footer class="site-footer">
         <span>Shadow Studios / robotics with imagination</span>
-        <a href="../../index.html">Back home &#8599;</a>
+        <span class="footer-links"><a href="../../digital-art.html">Digital art</a><a href="../../index.html">Back home &#8599;</a></span>
     </footer>
+    <script>
+        document.querySelectorAll(".download-link").forEach((link) => {
+            link.addEventListener("click", (event) => {
+                if (localStorage.getItem("shadowStudiosSignedIn") !== "true") {
+                    event.preventDefault();
+                    window.location.href = "../../auth.html?returnTo=projects/orbit-one/index.html#signin";
+                }
+            });
+        });
+    </script>
 </body>
 </html>

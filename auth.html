@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to Shadow Studios.">
+    <title>Account | Shadow Studios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <main class="auth-layout">
+        <a class="brand auth-brand" href="index.html"><span class="brand-mark">SS</span><span>Shadow Studios</span></a>
+        <section class="auth-panel" aria-labelledby="auth-title">
+            <p class="eyebrow">The workshop door</p>
+            <h1 id="auth-title">Come <span>inside.</span></h1>
+            <p class="auth-copy" id="auth-copy">Sign in to download project builds and keep your workshop shelf close.</p>
+            <form id="authForm">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required>
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" minlength="6" required>
+                <button class="button button-primary" type="submit"><span id="submit-label">Sign in</span> <span aria-hidden="true">&#8599;</span></button>
+                <p class="form-message" id="formMessage" role="status"></p>
+            </form>
+            <p class="auth-switch" id="authSwitch">New here? <a href="auth.html#signup">Create an account</a></p>
+            <a class="back-link" href="index.html">&#8592; Back to Shadow Studios</a>
+        </section>
+    </main>
+    <script>
+        const form = document.querySelector("#authForm");
+        const title = document.querySelector("#auth-title");
+        const copy = document.querySelector("#auth-copy");
+        const submitLabel = document.querySelector("#submit-label");
+        const switchText = document.querySelector("#authSwitch");
+        const message = document.querySelector("#formMessage");
+        const isSignup = window.location.hash === "#signup";
+
+        if (isSignup) {
+            title.innerHTML = "Make it <span>yours.</span>";
+            copy.textContent = "Create your free studio account to download project builds and collect the good stuff.";
+            submitLabel.textContent = "Sign up";
+            switchText.innerHTML = 'Already a member? <a href="auth.html#signin">Sign in</a>';
+        }
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            localStorage.setItem("shadowStudiosSignedIn", "true");
+            message.textContent = isSignup ? "Account created. Welcome to the workshop." : "You are signed in. Welcome back.";
+            const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+            window.setTimeout(() => { window.location.href = returnTo || "index.html"; }, 650);
+        });
+    </script>
+</body>
+</html>
