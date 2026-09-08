@@ -61,7 +61,7 @@ def handle_server_error(error):
 def chat():
     active_tokenizer = tokenizer
     if model is None or active_tokenizer is None:
-        return jsonify({"error": "The local model is not loaded."}), 503
+        return jsonify({"error": "The Shadow model is not loaded."}), 503
     payload = request.get_json(silent=True) or {}
     message = str(payload.get("message", "")).strip()
     if not message:
@@ -97,4 +97,4 @@ def home():
 
 if __name__ == "__main__":
     load_model()
-    app.run(host="127.0.0.1", port=8000, debug=False)
+    app.run(host="0.0.0.0", port=8000, debug=False)

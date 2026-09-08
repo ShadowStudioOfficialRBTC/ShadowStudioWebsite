@@ -1,15 +1,12 @@
-# 1. Initialize Git in your project directory
-git init
-
-# 2. Stage and commit all your files
+# 1. Stage all the files and updates in your ShadowStudios folder
 git add .
-git commit -m "commit to add ai features"
 
-# 3. Rename default branch to main
-git branch -M main
+# 2. Commit the new/updated website files
+git commit -m "Update complete website with AI integration"
 
-# 4. Link your specific repository URL
-git remote add origin https://github.com/ShadowStudioOfficialRBTC/ShadowStudioWebsite.git
+# 3. Push the new commit to GitHub
+git push origin main
 
-# 5. Push your files to GitHub
-git push -u origin main
+# Vercel model server setup
+# Set SHADOW_MODEL_SERVER in Vercel to the public URL of the Python model server.
+# Keep model_server.py running on a host that supports PyTorch and Qwen, then redeploy.

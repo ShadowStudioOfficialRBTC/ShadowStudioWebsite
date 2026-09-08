@@ -4,7 +4,7 @@ const input = document.querySelector("#chatInput");
 const clearChat = document.querySelector("#clearChat");
 const statusText = document.querySelector("#statusText");
 const modelStatus = document.querySelector("#modelStatus");
-const modelServer = "http://127.0.0.1:8000";
+const modelServer = window.SHADOW_MODEL_SERVER || "";
 const assetStates = {
     tokenizer: document.querySelector("#tokenizerState"),
     adapter: document.querySelector("#adapterState"),
@@ -35,8 +35,8 @@ async function loadLocalAssets() {
 
     const adapterReady = assetStates.adapter.classList.contains("is-ready");
     statusText.textContent = adapterReady
-        ? "Adapter assets loaded · connecting to model runtime..."
-        : "Model assets incomplete · runtime unavailable";
+        ? "Server assets loaded · connecting to model runtime..."
+        : "Server model assets incomplete · runtime unavailable";
     modelStatus.classList.toggle("is-ready", adapterReady);
 
     try {
@@ -44,7 +44,7 @@ async function loadLocalAssets() {
         if (!response.ok) throw new Error("Model runtime unavailable");
         statusText.textContent = "Shadow is ready · running on server";
     } catch (error) {
-        statusText.textContent = "Start model_server.py to talk to Shadow";
+        statusText.textContent = "The Shadow server is unavailable";
         modelStatus.classList.remove("is-ready");
     }
 }
@@ -85,7 +85,7 @@ async function replyTo(prompt) {
         addMessage(result.reply, "shadow");
     } catch (error) {
         pending.remove();
-        addMessage(`I could not reach the local model. ${error.message}`, "shadow");
+        addMessage(`I could not reach the Shadow server. ${error.message}`, "shadow");
     }
 }
 
