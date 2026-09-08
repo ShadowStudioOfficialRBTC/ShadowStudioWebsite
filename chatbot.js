@@ -1,55 +1,70 @@
+import { env, pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2/+esm";
+
+const MODEL_ID = "onnx-community/Qwen2.5-0.5B-Instruct-ONNX";
 const messages = document.querySelector("#messages");
 const form = document.querySelector("#chatForm");
 const input = document.querySelector("#chatInput");
 const clearChat = document.querySelector("#clearChat");
 const statusText = document.querySelector("#statusText");
 const modelStatus = document.querySelector("#modelStatus");
-const modelServer = window.SHADOW_MODEL_SERVER || "";
 const assetStates = {
-    tokenizer: document.querySelector("#tokenizerState"),
-    adapter: document.querySelector("#adapterState"),
-    data: document.querySelector("#dataState")
+    model: document.querySelector("#adapterState"),
+    runtime: document.querySelector("#dataState")
 };
+let generator;
+let loadingPromise;
+
+env.allowLocalModels = false;
+env.useBrowserCache = true;
+
 function setAssetState(name, value, isReady) {
     assetStates[name].textContent = value;
     assetStates[name].classList.toggle("is-ready", isReady);
 }
 
-async function loadLocalAssets() {
-    const assets = [
-        ["tokenizer", "AIShadow/AShadowTokenizer/tokenizer.json"],
-        ["adapter", "AIShadow/Shadow500M/adapter_config.json"],
-        ["data", "AIShadow/data.csv"]
-    ];
-    const results = await Promise.allSettled(assets.map(([, path]) => fetch(path)));
+function setStatus(text, isReady = false) {
+    statusText.textContent = text;
+    modelStatus.classList.toggle("is-ready", isReady);
+}
 
-    for (const [index, result] of results.entries()) {
-        const [name] = assets[index];
-        if (result.status === "fulfilled" && result.value.ok) {
-            const content = await result.value.text();
-            setAssetState(name, "loaded", true);
-        } else {
-            setAssetState(name, "unavailable", false);
+async function loadBrowserModel() {
+    if (generator) return generator;
+    if (loadingPromise) return loadingPromise;
+    loadingPromise = (async () => {
+        setStatus("Downloading browser model · first load may take a moment...");
+        setAssetState("model", "loading", false);
+        setAssetState("runtime", "starting", false);
+        let device = "wasm";
+        if ("gpu" in navigator) {
+            try {
+                const adapter = await navigator.gpu.requestAdapter();
+                if (adapter) device = "webgpu";
+            } catch (error) {
+                device = "wasm";
+            }
         }
-    }
-
-    const adapterReady = assetStates.adapter.classList.contains("is-ready");
-    statusText.textContent = adapterReady
-        ? "Server assets loaded · connecting to model runtime..."
-        : "Server model assets incomplete · runtime unavailable";
-    modelStatus.classList.toggle("is-ready", adapterReady);
-
+        try {
+            generator = await pipeline("text-generation", MODEL_ID, { device, dtype: "q4" });
+        } catch (error) {
+            if (device !== "wasm") {
+                setStatus("WebGPU unavailable · switching to browser CPU...");
+                generator = await pipeline("text-generation", MODEL_ID, { device: "wasm", dtype: "q4" });
+                device = "wasm";
+            } else {
+                throw error;
+            }
+        }
+        setAssetState("model", "loaded", true);
+        setAssetState("runtime", device, true);
+        setStatus(`Shadow is ready · running in browser (${device})`, true);
+        return generator;
+    })();
     try {
-        const response = await fetch(`${modelServer}/api/health`);
-        const responseText = await response.text();
-        const result = responseText ? JSON.parse(responseText) : {};
-        if (!response.ok) throw new Error(result.error || "Model runtime unavailable");
-        statusText.textContent = "Shadow is ready · running on server";
+        return await loadingPromise;
     } catch (error) {
-        statusText.textContent = error.message.includes("SHADOW_MODEL_SERVER")
-            ? "Configure SHADOW_MODEL_SERVER in Vercel"
-            : "The Shadow server is unavailable";
-        modelStatus.classList.remove("is-ready");
+        loadingPromise = undefined;
+        setStatus("Browser model could not load");
+        throw error;
     }
 }
 
@@ -71,25 +86,17 @@ async function replyTo(prompt) {
     messages.scrollTop = messages.scrollHeight;
 
     try {
-        const response = await fetch(`${modelServer}/api/chat`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: prompt })
+        const model = await loadBrowserModel();
+        const output = await model(`<|im_start|>system\nYou are Shadow, a helpful AI assistant created by ShadowStudios.<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`, {
+            max_new_tokens: 180, do_sample: true, temperature: 0.7, top_p: 0.9, return_full_text: false
         });
-        const responseText = await response.text();
-        let result;
-        try {
-            result = responseText ? JSON.parse(responseText) : {};
-        } catch (error) {
-            throw new Error(`Server returned ${response.status} ${response.statusText}, not JSON`);
-        }
-        if (!response.ok) throw new Error(result.error || `Model request failed (${response.status})`);
-        if (!result.reply) throw new Error("The model returned an empty reply");
+        const reply = output[0]?.generated_text?.trim();
+        if (!reply) throw new Error("The browser model returned an empty reply");
         pending.remove();
-        addMessage(result.reply, "shadow");
+        addMessage(reply, "shadow");
     } catch (error) {
         pending.remove();
-        addMessage(`I could not reach the Shadow server. ${error.message}`, "shadow");
+        addMessage(`I could not load the browser model. ${error.message}`, "shadow");
     }
 }
 
@@ -115,4 +122,4 @@ clearChat.addEventListener("click", () => {
     input.focus();
 });
 
-loadLocalAssets();
+loadBrowserModel().catch(() => {});
