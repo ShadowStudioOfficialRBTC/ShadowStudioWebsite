@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lander Pro | Shadow Studios</title>
+    <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="../../index.html" aria-label="Shadow Studios home">
+            <span class="brand-mark">SS</span>
+            <span>Shadow Studios</span>
+        </a>
+        <nav aria-label="Main navigation">
+            <a href="../../about.html">About us</a>
+            <a href="../../projects.html" aria-current="page">Projects</a>
+            <a href="../../experiments.html">Experiments</a>
+        </nav>
+    </header>
+
+    <main class="project-page">
+        <section class="project-hero" aria-labelledby="project-title">
+            <div class="project-copy">
+                <a class="project-back" href="../../projects.html">&#8592; Back to projects</a>
+                <p class="eyebrow">Project 01 / autonomy lab</p>
+                <h1 id="project-title">Lander <span>Pro</span></h1>
+                <p class="project-lede">A reinforcement-learning project training an agent to land safely in Gymnasium's LunarLander environment.</p>
+                <div class="project-tags" aria-label="Project technologies">
+                    <span>Python</span>
+                    <span>Gymnasium</span>
+                    <span>DQN</span>
+                </div>
+            </div>
+            <div class="project-visual">
+                <img src="img/preview.svg" alt="Abstract preview of the Lander Pro robot project">
+                <span class="visual-label">learn / steer / land</span>
+            </div>
+        </section>
+
+        <section class="project-details" aria-labelledby="details-title">
+            <div>
+                <p class="section-kicker">The build</p>
+                <h2 id="details-title">Teaching a machine to trust its instruments.</h2>
+            </div>
+            <div class="project-description">
+                <p>Lander Pro uses a Deep Q-Network to learn control through repeated simulation. The agent reads the lander's state, chooses an action, and gradually improves its flight through reward and feedback.</p>
+                <p>Everything needed to explore the experiment is available below, from the training script to the environment dependencies and license.</p>
+            </div>
+        </section>
+
+        <aside class="project-downloads" aria-label="Download project files">
+            <div>
+                <p class="section-kicker">Take it to the workshop</p>
+                <h2>Download the build.</h2>
+            </div>
+            <div class="download-list">
+                <a href="main.py" download><span>Python source</span><strong>main.py &#8595;</strong></a>
+                <a href="requirements.txt" download><span>Dependencies</span><strong>requirements.txt &#8595;</strong></a>
+                <a href="LICENSE" download><span>License</span><strong>LICENSE &#8595;</strong></a>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="site-footer">
+        <span>Shadow Studios / robotics with imagination</span>
+        <a href="../../index.html">Back home &#8599;</a>
+    </footer>
+</body>
+</html>

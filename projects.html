@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore the robotics projects built by Shadow Studios.">
+    <title>Projects | Shadow Studios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="Shadow Studios home">
+            <span class="brand-mark">SS</span>
+            <span>Shadow Studios</span>
+        </a>
+        <nav aria-label="Main navigation">
+            <a href="about.html">About us</a>
+            <a href="projects.html" aria-current="page">Projects</a>
+            <a href="experiments.html">Experiments</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-intro section-shell" aria-labelledby="projects-title">
+            <div class="section-kicker">02 / the directory</div>
+            <h1 id="projects-title">Projects in <span>motion.</span></h1>
+            <p>Builds, prototypes, and curious machines from the Shadow Studios workshop.</p>
+        </section>
+
+        <section class="projects project-directory" aria-label="Project directory">
+            <div class="project-grid" id="projectGrid" aria-live="polite">
+                <p class="loading-state">Loading the workshop...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>Shadow Studios / robotics with imagination</span>
+        <a href="index.html">Back home &#8599;</a>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
