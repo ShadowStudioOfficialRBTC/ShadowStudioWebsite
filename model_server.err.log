@@ -1,0 +1,39 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights:   0%|          | 1/290 [00:00<04:03,  1.19it/s]Loading weights:  72%|#######2  | 209/290 [00:00<00:00, 285.78it/s]Loading weights: 100%|##########| 290/290 [00:01<00:00, 191.96it/s]
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+127.0.0.1 - - [08/Sep/2026 20:00:54] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:00:57] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:15] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:18] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:23] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:29] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:36] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:41] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:01:53] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:19] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:19] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:20] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:20] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:21] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:21] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:22] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:22] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:40] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:02:58] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:03:03] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:03:20] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:03:48] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:15] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:18] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:25] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:27] "OPTIONS /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:38] "POST /api/chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:38] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:04:56] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:05:28] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:05:29] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:05:30] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:05:36] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [08/Sep/2026 20:05:41] "GET /api/health HTTP/1.1" 200 -

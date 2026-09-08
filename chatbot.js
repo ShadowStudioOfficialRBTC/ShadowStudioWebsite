@@ -4,13 +4,12 @@ const input = document.querySelector("#chatInput");
 const clearChat = document.querySelector("#clearChat");
 const statusText = document.querySelector("#statusText");
 const modelStatus = document.querySelector("#modelStatus");
+const modelServer = "http://127.0.0.1:8000";
 const assetStates = {
     tokenizer: document.querySelector("#tokenizerState"),
     adapter: document.querySelector("#adapterState"),
     data: document.querySelector("#dataState")
 };
-let knowledge = [];
-
 function setAssetState(name, value, isReady) {
     assetStates[name].textContent = value;
     assetStates[name].classList.toggle("is-ready", isReady);
@@ -29,7 +28,6 @@ async function loadLocalAssets() {
         if (result.status === "fulfilled" && result.value.ok) {
             const content = await result.value.text();
             setAssetState(name, "loaded", true);
-            if (name === "data") knowledge = parseCsv(content);
         } else {
             setAssetState(name, "unavailable", false);
         }
@@ -37,31 +35,18 @@ async function loadLocalAssets() {
 
     const adapterReady = assetStates.adapter.classList.contains("is-ready");
     statusText.textContent = adapterReady
-        ? "Local assets ready · adapter needs Qwen base runtime"
-        : "Local assistant ready · asset check incomplete";
-    modelStatus.classList.add("is-ready");
-}
+        ? "Adapter assets loaded · connecting to model runtime..."
+        : "Model assets incomplete · runtime unavailable";
+    modelStatus.classList.toggle("is-ready", adapterReady);
 
-function parseCsv(csv) {
-    return csv.split(/\r?\n/).slice(1).filter(Boolean).map((line) => {
-        const match = line.match(/^([^,]+),("[\s\S]*"|.*)$/);
-        if (!match) return null;
-        return {
-            question: match[1].trim().toLowerCase(),
-            answer: match[2].trim().replace(/^"|"$/g, "").replace(/""/g, '"')
-        };
-    }).filter(Boolean);
-}
-
-function getReply(prompt) {
-    const normalized = prompt.toLowerCase().replace(/[?!.,]/g, "").trim();
-    const exact = knowledge.find((item) => item.question === normalized);
-    if (exact) return exact.answer;
-    const related = knowledge.find((item) => normalized.includes(item.question) || item.question.includes(normalized));
-    if (related) return related.answer;
-    if (/hello|hi|hey/.test(normalized)) return "Hello! I am Shadow. How can I help you today?";
-    if (/help|do you do|capabilities/.test(normalized)) return "I can help answer questions, write code, brainstorm, and process text. Try asking me about the studio or give me something to make.";
-    return "I am still learning that one. Try asking me about Shadow, ShadowStudios, robotics, code, or a creative idea.";
+    try {
+        const response = await fetch(`${modelServer}/api/health`);
+        if (!response.ok) throw new Error("Model runtime unavailable");
+        statusText.textContent = "Shadow is ready · running on server";
+    } catch (error) {
+        statusText.textContent = "Start model_server.py to talk to Shadow";
+        modelStatus.classList.remove("is-ready");
+    }
 }
 
 function addMessage(text, sender) {
@@ -74,8 +59,34 @@ function addMessage(text, sender) {
     messages.scrollTop = messages.scrollHeight;
 }
 
-function replyTo(prompt) {
-    window.setTimeout(() => addMessage(getReply(prompt), "shadow"), 300);
+async function replyTo(prompt) {
+    const pending = document.createElement("article");
+    pending.className = "message message-shadow message-pending";
+    pending.innerHTML = '<div class="message-label">Shadow <time>now</time></div><p>Thinking...</p>';
+    messages.append(pending);
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+        const response = await fetch(`${modelServer}/api/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: prompt })
+        });
+        const responseText = await response.text();
+        let result;
+        try {
+            result = responseText ? JSON.parse(responseText) : {};
+        } catch (error) {
+            throw new Error(`Server returned ${response.status} ${response.statusText}, not JSON`);
+        }
+        if (!response.ok) throw new Error(result.error || `Model request failed (${response.status})`);
+        if (!result.reply) throw new Error("The model returned an empty reply");
+        pending.remove();
+        addMessage(result.reply, "shadow");
+    } catch (error) {
+        pending.remove();
+        addMessage(`I could not reach the local model. ${error.message}`, "shadow");
+    }
 }
 
 form.addEventListener("submit", (event) => {

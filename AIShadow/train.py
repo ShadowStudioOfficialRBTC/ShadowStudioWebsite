@@ -72,6 +72,6 @@ print("Starting model training...")
 trainer.train()
 
 # 7. Save Final Model Adapter & Tokenizer
-trainer.model.save_pretrained("./qwen_fine_tuned_final")
+model.save_pretrained("./qwen_fine_tuned_final")
 tokenizer.save_pretrained("./qwen_fine_tuned_final")
 print("Training complete! Model saved to ./qwen_fine_tuned_final")
