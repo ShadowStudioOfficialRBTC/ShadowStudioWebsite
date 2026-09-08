@@ -1,0 +1,15 @@
+# 1. Initialize Git in your project directory
+git init
+
+# 2. Stage and commit all your files
+git add .
+git commit -m "commit to add ai features"
+
+# 3. Rename default branch to main
+git branch -M main
+
+# 4. Link your specific repository URL
+git remote add origin https://github.com/ShadowStudioOfficialRBTC/ShadowStudioWebsite.git
+
+# 5. Push your files to GitHub
+git push -u origin main

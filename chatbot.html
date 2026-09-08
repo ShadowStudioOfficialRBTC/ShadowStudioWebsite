@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Talk to Shadow, the Shadow Studios assistant.">
+    <title>Talk to Shadow | Shadow Studios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="chat-page">
+    <main class="chat-shell">
+        <header class="chat-header">
+            <a class="brand" href="index.html" aria-label="Back to Shadow Studios home">
+                <span class="brand-mark">SS</span>
+                <span>Shadow Studios</span>
+            </a>
+            <a class="chat-close" href="index.html" aria-label="Close chat">&#10005;</a>
+        </header>
+
+        <section class="chat-layout" aria-labelledby="chat-title">
+            <aside class="chat-intro">
+                <p class="eyebrow">Shadow / 500M</p>
+                <h1 id="chat-title">Talk to <span>Shadow.</span></h1>
+                <p class="chat-lede">A small studio-built assistant for big questions, quick ideas, and curious detours.</p>
+                <div class="model-status" id="modelStatus" role="status" aria-live="polite">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span id="statusText">Loading local model assets...</span>
+                </div>
+                <div class="asset-list" aria-label="Local model assets">
+                    <div><span>Tokenizer</span><strong id="tokenizerState">waiting</strong></div>
+                    <div><span>Adapter</span><strong id="adapterState">waiting</strong></div>
+                    <div><span>Knowledge pairs</span><strong id="dataState">waiting</strong></div>
+                </div>
+            </aside>
+
+            <section class="chat-window" aria-label="Chat with Shadow">
+                <div class="chat-window-top">
+                    <div class="shadow-avatar" aria-hidden="true">S</div>
+                    <div>
+                        <strong>Shadow</strong>
+                        <span><i></i> local studio assistant</span>
+                    </div>
+                    <button class="clear-chat" id="clearChat" type="button">Clear</button>
+                </div>
+                <div class="messages" id="messages" aria-live="polite">
+                    <article class="message message-shadow">
+                        <div class="message-label">Shadow <time>now</time></div>
+                        <p>Hello! I am Shadow, a 500M parameter assistant created by ShadowStudios. What are we making today?</p>
+                    </article>
+                </div>
+                <div class="suggestions" aria-label="Suggested prompts">
+                    <button type="button" data-prompt="What can you do?">What can you do?</button>
+                    <button type="button" data-prompt="Tell me about ShadowStudios.">About the studio</button>
+                    <button type="button" data-prompt="Give me a short poem about stars.">Write a poem</button>
+                </div>
+                <p class="chat-disclaimer">Shadow can make mistakes. Please verify all information provided by him.</p>
+                <form class="chat-composer" id="chatForm">
+                    <label class="sr-only" for="chatInput">Message Shadow</label>
+                    <input id="chatInput" name="message" type="text" autocomplete="off" placeholder="Ask Shadow anything..." maxlength="500" required>
+                    <button class="send-button" type="submit" aria-label="Send message">&#8599;</button>
+                </form>
+            </section>
+        </section>
+    </main>
+    <script src="chatbot.js"></script>
+</body>
+</html>
