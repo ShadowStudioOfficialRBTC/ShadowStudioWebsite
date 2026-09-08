@@ -24,8 +24,10 @@ nav a:hover, .text-link:hover, .site-footer a:hover { color: var(--coral); }
 .eyebrow, .section-kicker { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
 .eyebrow { color: var(--coral); margin: 0 0 20px; }
 h1, h2 { font-family: "Caveat", cursive; font-weight: 700; letter-spacing: 0; margin: 0; }
-h1 { font-size: clamp(4rem, 10vw, 9rem); line-height: 0.85; max-width: 750px; }
+h1 { font-size: clamp(4.4rem, 11vw, 10rem); line-height: 0.85; max-width: 750px; }
 h1 span { color: var(--blue); display: block; font-style: italic; }
+.studio-collab { color: var(--coral); font-size: 1.15rem; font-weight: 700; letter-spacing: 0.08em; margin: 22px 0 0; text-transform: uppercase; }
+.studio-collab b { color: var(--lime); font-size: 1.4rem; margin: 0 8px; }
 .hero-text { font-size: 1.15rem; line-height: 1.55; margin: 34px 0; max-width: 500px; }
 .page-intro { padding-bottom: 90px; padding-top: 100px; }
 .page-intro h1 { margin-top: 24px; }
@@ -34,7 +36,8 @@ h1 span { color: var(--blue); display: block; font-style: italic; }
 .hero-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 24px; }
 .account-actions { align-items: center; display: flex; gap: 18px; margin-top: 32px; }
 .account-actions a { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
-.account-actions a:first-child { border-bottom: 2px solid currentColor; padding-bottom: 4px; }
+.account-signin { background: var(--blue); box-shadow: 4px 4px 0 var(--ink); color: var(--cream); padding: 13px 17px; }
+.account-signin span { color: var(--lime); font-size: 1rem; margin-left: 5px; }
 .account-signup { background: var(--ink); color: var(--lime); padding: 13px 17px; }
 .button { border: 2px solid var(--ink); border-radius: 999px; display: inline-flex; font-size: 0.85rem; font-weight: 900; gap: 15px; padding: 16px 22px; text-transform: uppercase; transition: transform 180ms ease, box-shadow 180ms ease; }
 .button-primary { background: var(--lime); box-shadow: 5px 5px 0 var(--ink); }
