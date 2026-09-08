@@ -4,5 +4,9 @@
         "description": "A LunarLander reinforcement-learning project exploring control, simulation, and autonomous flight.",
         "image": "projects/orbit-one/img/preview.svg",
         "link": "projects/orbit-one/"
+    },
+    {
+        "title": "RecipesGPT One",
+        "description": "A fine-tuned Qwen language model that generates recipes from a curated recipe dataset."
     }
 ]
