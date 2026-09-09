@@ -75,6 +75,11 @@ async function loadWorkspaceModel(onProgress = () => {}) {
     loadingPromise = (async () => {
         if ("serviceWorker" in navigator) {
             await navigator.serviceWorker.ready;
+            if (!navigator.serviceWorker.controller) {
+                await new Promise((resolve) => {
+                    navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
+                });
+            }
         }
         showModelLoading();
         onProgress("Loading Shadow from local files...");
@@ -101,7 +106,7 @@ async function loadWorkspaceModel(onProgress = () => {}) {
         loadingPromise = undefined;
         window.clearInterval(countdownTimer);
         loaderTitle.textContent = `${MODEL_NAME} could not load`;
-        loaderCopy.textContent = "The local Shadow files could not be loaded. Please refresh and try again.";
+        loaderCopy.textContent = `The local Shadow files could not be loaded: ${error.message}`;
         setStatus("Shadow model could not load");
         throw error;
     }

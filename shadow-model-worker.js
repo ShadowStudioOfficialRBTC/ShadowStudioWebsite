@@ -7,6 +7,11 @@ const partPaths = [
     `${modelPath}.part4`
 ];
 
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (event) => {
+    event.waitUntil(self.clients.claim());
+});
+
 self.addEventListener("fetch", (event) => {
     const requestUrl = new URL(event.request.url);
     if (requestUrl.pathname !== modelPath) return;
