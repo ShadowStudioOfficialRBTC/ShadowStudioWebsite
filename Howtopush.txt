@@ -7,5 +7,6 @@ git commit -m "Update complete website with AI integration"
 # 3. Push the new commit to GitHub
 git push origin main
 
-# The chatbot serves its browser model from models/Qwen2.5-0.5B-Instruct-ONNX.
-# Deploy the complete models directory with the website.
+# The chatbot loads Shadow300M remotely from Hugging Face:
+# ShadowStudioOfficialRBTC/Shadow300M.
+# Deploy the complete website with the chatbot files.

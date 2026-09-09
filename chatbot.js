@@ -1,12 +1,21 @@
 import { env, pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2/+esm";
 
-const MODEL_PATH = "./models/Qwen2.5-0.5B-Instruct-ONNX";
+const MODEL_PATH = "ShadowStudioOfficialRBTC/Shadow300M";
+const ESTIMATED_LOAD_SECONDS = 120;
 const messages = document.querySelector("#messages");
 const form = document.querySelector("#chatForm");
 const input = document.querySelector("#chatInput");
 const clearChat = document.querySelector("#clearChat");
 const statusText = document.querySelector("#statusText");
 const modelStatus = document.querySelector("#modelStatus");
+const modelLoader = document.querySelector("#modelLoader");
+const loaderTitle = document.querySelector("#loaderTitle");
+const loaderCopy = document.querySelector("#loaderCopy");
+const timeLeft = document.querySelector("#timeLeft");
+const loaderProgress = document.querySelector("#loaderProgress");
+const queueStep = document.querySelector("#queueStep");
+const modelStep = document.querySelector("#modelStep");
+const readyStep = document.querySelector("#readyStep");
 const assetStates = {
     model: document.querySelector("#adapterState"),
     runtime: document.querySelector("#dataState")
@@ -14,9 +23,12 @@ const assetStates = {
 let generator;
 let loadingPromise;
 
-env.allowLocalModels = true;
-env.allowRemoteModels = false;
+env.allowLocalModels = false;
+env.allowRemoteModels = true;
 env.useBrowserCache = true;
+let loadStartedAt;
+let countdownTimer;
+
 function setAssetState(name, value, isReady) {
     assetStates[name].textContent = value;
     assetStates[name].classList.toggle("is-ready", isReady);
@@ -27,12 +39,55 @@ function setStatus(text, isReady = false) {
     modelStatus.classList.toggle("is-ready", isReady);
 }
 
+function setLoaderStep(activeStep) {
+    [queueStep, modelStep, readyStep].forEach((step, index) => {
+        step.classList.toggle("is-active", index === activeStep);
+        step.classList.toggle("is-done", index < activeStep);
+    });
+}
+
+function updateCountdown() {
+    const elapsed = Math.floor((Date.now() - loadStartedAt) / 1000);
+    const remaining = Math.max(0, ESTIMATED_LOAD_SECONDS - elapsed);
+    const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+    const seconds = String(remaining % 60).padStart(2, "0");
+    timeLeft.textContent = `${minutes}:${seconds}`;
+}
+
+function startLoadingScreen() {
+    loadStartedAt = Date.now();
+    updateCountdown();
+    countdownTimer = window.setInterval(updateCountdown, 1000);
+    loaderTitle.textContent = "You are in the queue";
+    loaderCopy.textContent = "Preparing a secure browser session for the studio model.";
+    loaderProgress.style.width = "6%";
+    setLoaderStep(0);
+}
+
+function showModelLoading() {
+    loaderTitle.textContent = "Loading Shadow300M";
+    loaderCopy.textContent = "Fetching model files from Hugging Face. You can watch the progress here.";
+    setLoaderStep(1);
+}
+
+function finishLoadingScreen() {
+    window.clearInterval(countdownTimer);
+    timeLeft.textContent = "00:00";
+    loaderTitle.textContent = "Shadow is ready";
+    loaderCopy.textContent = "The chat is live. Your messages run in this browser session.";
+    loaderProgress.style.width = "100%";
+    setLoaderStep(2);
+    window.setTimeout(() => modelLoader.classList.add("is-hidden"), 700);
+}
+
 async function loadWorkspaceModel(onProgress = () => {}) {
     if (generator) return generator;
     if (loadingPromise) return loadingPromise;
     loadingPromise = (async () => {
-        onProgress("Loading model files from this server...");
-        setStatus("Loading workspace model files...");
+        await new Promise((resolve) => window.setTimeout(resolve, 1400));
+        showModelLoading();
+        onProgress("Loading Shadow300M from Hugging Face...");
+        setStatus("Loading Shadow300M...");
         setAssetState("model", "loading", false);
         setAssetState("runtime", "starting", false);
         let device = "wasm";
@@ -49,20 +104,26 @@ async function loadWorkspaceModel(onProgress = () => {}) {
             dtype: "q4",
             progress_callback: (progress) => {
                 if (progress.status === "progress" && progress.progress) {
-                    onProgress(`Loading model files from this server... ${Math.round(progress.progress)}%`);
+                    const percent = Math.round(progress.progress);
+                    loaderProgress.style.width = `${Math.max(6, percent)}%`;
+                    onProgress(`Loading Shadow300M from Hugging Face... ${percent}%`);
                 }
             }
         });
         setAssetState("model", "loaded", true);
         setAssetState("runtime", device, true);
         setStatus(`Shadow is ready · running in browser (${device})`, true);
+        finishLoadingScreen();
         return generator;
     })();
     try {
         return await loadingPromise;
     } catch (error) {
         loadingPromise = undefined;
-        setStatus("Workspace model could not load");
+        window.clearInterval(countdownTimer);
+        loaderTitle.textContent = "Shadow could not load";
+        loaderCopy.textContent = "Check your connection and refresh to try again.";
+        setStatus("Shadow model could not load");
         throw error;
     }
 }
@@ -80,7 +141,7 @@ function addMessage(text, sender) {
 async function replyTo(prompt) {
     const pending = document.createElement("article");
     pending.className = "message message-shadow message-pending";
-    pending.innerHTML = '<div class="message-label">Shadow <time>now</time></div><p>Loading model on server...</p>';
+    pending.innerHTML = '<div class="message-label">Shadow <time>now</time></div><p>Thinking...</p>';
     messages.append(pending);
     messages.scrollTop = messages.scrollHeight;
 
@@ -96,12 +157,12 @@ async function replyTo(prompt) {
             return_full_text: false
         });
         const reply = output[0]?.generated_text?.trim();
-        if (!reply) throw new Error("The workspace model returned an empty reply");
+        if (!reply) throw new Error("Shadow300M returned an empty reply");
         pending.remove();
         addMessage(reply, "shadow");
     } catch (error) {
         pending.remove();
-        addMessage(`I could not load the workspace model. ${error.message}`, "shadow");
+        addMessage(`I could not load Shadow300M. ${error.message}`, "shadow");
     }
 }
 
@@ -127,4 +188,5 @@ clearChat.addEventListener("click", () => {
     input.focus();
 });
 
-setStatus("Workspace model ready to load · send a message to begin");
+startLoadingScreen();
+loadWorkspaceModel().catch(() => {});

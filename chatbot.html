@@ -19,16 +19,16 @@
 
         <section class="chat-layout" aria-labelledby="chat-title">
             <aside class="chat-intro">
-                <p class="eyebrow">Shadow / 500M</p>
+            <p class="eyebrow">Shadow / 300M</p>
                 <h1 id="chat-title">Talk to <span>Shadow.</span></h1>
-                <p class="chat-lede">A small studio-built assistant for big questions, quick ideas, and curious detours.</p>
+            <p class="chat-lede">A studio-built assistant for big questions, quick ideas, and curious detours.</p>
                 <div class="model-status" id="modelStatus" role="status" aria-live="polite">
                     <span class="status-dot" aria-hidden="true"></span>
-                    <span id="statusText">Workspace model ready to load...</span>
+                            <span id="statusText">Connecting to Shadow...</span>
                 </div>
-                <div class="asset-list" aria-label="Workspace model status">
-                    <div><span>Model</span><strong id="tokenizerState">workspace</strong></div>
-                    <div><span>Weights</span><strong id="adapterState">workspace</strong></div>
+                <div class="asset-list" aria-label="Shadow model status">
+                    <div><span>Model</span><strong id="tokenizerState">Shadow300M</strong></div>
+                    <div><span>Weights</span><strong id="adapterState">queued</strong></div>
                     <div><span>Runtime</span><strong id="dataState">waiting</strong></div>
                 </div>
             </aside>
@@ -38,14 +38,14 @@
                     <div class="shadow-avatar" aria-hidden="true">S</div>
                     <div>
                         <strong>Shadow</strong>
-                        <span><i></i> workspace model assistant</span>
+                            <span><i></i> online model assistant</span>
                     </div>
                     <button class="clear-chat" id="clearChat" type="button">Clear</button>
                 </div>
                 <div class="messages" id="messages" aria-live="polite">
                     <article class="message message-shadow">
                         <div class="message-label">Shadow <time>now</time></div>
-                        <p>Hello! I am Shadow, a 500M parameter assistant created by ShadowStudios. What are we making today?</p>
+                        <p>Hello! I am Shadow, a 300M parameter assistant created by ShadowStudios. What are we making today?</p>
                     </article>
                 </div>
                 <div class="suggestions" aria-label="Suggested prompts">
@@ -62,6 +62,21 @@
             </section>
         </section>
     </main>
+    <section class="model-loader" id="modelLoader" aria-live="polite" aria-label="Loading Shadow300M">
+        <div class="loader-card">
+            <div class="loader-orbit" aria-hidden="true"><span></span></div>
+            <p class="eyebrow">Shadow / remote runtime</p>
+            <h2 id="loaderTitle">You are in the queue</h2>
+            <p class="loader-copy" id="loaderCopy">Preparing a secure browser session for the studio model.</p>
+            <div class="loader-time"><span>Estimated time left</span><strong id="timeLeft">02:00</strong></div>
+            <div class="loader-progress"><span id="loaderProgress"></span></div>
+            <div class="loader-steps" aria-label="Model loading steps">
+                <span class="loader-step is-active" id="queueStep"><b>01</b> Queue</span>
+                <span class="loader-step" id="modelStep"><b>02</b> Load model</span>
+                <span class="loader-step" id="readyStep"><b>03</b> Ready</span>
+            </div>
+        </div>
+    </section>
     <script type="module" src="chatbot.js"></script>
 </body>
 </html>
