@@ -4,7 +4,7 @@ $model = "HuggingFaceTB/SmolLM-135M-Instruct"
 $destination = Join-Path $PSScriptRoot "Ashadow\$model"
 $temporary = Join-Path $PSScriptRoot ".shadow-model-download"
 $original = Join-Path $temporary "onnx\model_q4.onnx"
-$partSize = 90MB
+$partSize = 45MB
 
 Write-Host "Downloading $model to $destination"
 hf download $model `

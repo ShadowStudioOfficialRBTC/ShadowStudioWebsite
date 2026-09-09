@@ -2,7 +2,9 @@ const modelUrl = new URL("Ashadow/HuggingFaceTB/SmolLM-135M-Instruct/onnx/model_
 const modelPath = modelUrl.pathname;
 const partPaths = [
     `${modelPath}.part1`,
-    `${modelPath}.part2`
+    `${modelPath}.part2`,
+    `${modelPath}.part3`,
+    `${modelPath}.part4`
 ];
 
 self.addEventListener("fetch", (event) => {
@@ -17,7 +19,7 @@ self.addEventListener("fetch", (event) => {
         const parts = await Promise.all(responses.map((response) => response.arrayBuffer()));
         return new Response(new Blob(parts, { type: "application/octet-stream" }), {
             headers: {
-                "Content-Length": String(parts[0].byteLength + parts[1].byteLength),
+            "Content-Length": String(parts.reduce((total, part) => total + part.byteLength, 0)),
                 "Content-Type": "application/octet-stream"
             }
         });
