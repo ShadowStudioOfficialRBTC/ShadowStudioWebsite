@@ -1,12 +1,8 @@
-# 1. Stage all the files and updates in your ShadowStudios folder
-git add .
+ones at start
+git init
+git branch -M main
 
-# 2. Commit the new/updated website files
-git commit -m "Update complete website with AI integration"
+#Multipel times
+git commit -m "Add complete website commit to intraduce dowlfn "
 
-# 3. Push the new commit to GitHub
-git push origin main
-
-# The chatbot loads Shadow300M remotely from Hugging Face:
-# ShadowStudioOfficialRBTC/Shadow300M.
-# Deploy the complete website with the chatbot files.
+git push -u origin main --force

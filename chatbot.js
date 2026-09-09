@@ -1,6 +1,7 @@
 import { env, pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2/+esm";
 
-const MODEL_PATH = "ShadowStudioOfficialRBTC/Shadow300M";
+const MODEL_PATH = "HuggingFaceTB/SmolLM-135M-Instruct";
+const MODEL_NAME = "SmolLM 135M";
 const ESTIMATED_LOAD_SECONDS = 120;
 const messages = document.querySelector("#messages");
 const form = document.querySelector("#chatForm");
@@ -23,8 +24,9 @@ const assetStates = {
 let generator;
 let loadingPromise;
 
-env.allowLocalModels = false;
-env.allowRemoteModels = true;
+env.localModelPath = "./Ashadow/";
+env.allowLocalModels = true;
+env.allowRemoteModels = false;
 env.useBrowserCache = true;
 let loadStartedAt;
 let countdownTimer;
@@ -65,8 +67,8 @@ function startLoadingScreen() {
 }
 
 function showModelLoading() {
-    loaderTitle.textContent = "Loading Shadow300M";
-    loaderCopy.textContent = "Fetching model files from Hugging Face. You can watch the progress here.";
+    loaderTitle.textContent = "Loading Shadow";
+    loaderCopy.textContent = "Loading the model from this website's local files.";
     setLoaderStep(1);
 }
 
@@ -86,8 +88,8 @@ async function loadWorkspaceModel(onProgress = () => {}) {
     loadingPromise = (async () => {
         await new Promise((resolve) => window.setTimeout(resolve, 1400));
         showModelLoading();
-        onProgress("Loading Shadow300M from Hugging Face...");
-        setStatus("Loading Shadow300M...");
+        onProgress(`Loading ${MODEL_NAME} from local files...`);
+        setStatus(`Loading ${MODEL_NAME}...`);
         setAssetState("model", "loading", false);
         setAssetState("runtime", "starting", false);
         let device = "wasm";
@@ -106,13 +108,13 @@ async function loadWorkspaceModel(onProgress = () => {}) {
                 if (progress.status === "progress" && progress.progress) {
                     const percent = Math.round(progress.progress);
                     loaderProgress.style.width = `${Math.max(6, percent)}%`;
-                    onProgress(`Loading Shadow300M from Hugging Face... ${percent}%`);
+                    onProgress(`Loading ${MODEL_NAME} from local files... ${percent}%`);
                 }
             }
         });
         setAssetState("model", "loaded", true);
         setAssetState("runtime", device, true);
-        setStatus(`Shadow is ready · running in browser (${device})`, true);
+        setStatus(`Shadow is ready · ${MODEL_NAME} running in browser (${device})`, true);
         finishLoadingScreen();
         return generator;
     })();
@@ -121,8 +123,8 @@ async function loadWorkspaceModel(onProgress = () => {}) {
     } catch (error) {
         loadingPromise = undefined;
         window.clearInterval(countdownTimer);
-        loaderTitle.textContent = "Shadow could not load";
-        loaderCopy.textContent = "Check your connection and refresh to try again.";
+        loaderTitle.textContent = `${MODEL_NAME} could not load`;
+        loaderCopy.textContent = "Run download-shadow-model.ps1, then refresh this page.";
         setStatus("Shadow model could not load");
         throw error;
     }
@@ -157,12 +159,12 @@ async function replyTo(prompt) {
             return_full_text: false
         });
         const reply = output[0]?.generated_text?.trim();
-        if (!reply) throw new Error("Shadow300M returned an empty reply");
+        if (!reply) throw new Error(`${MODEL_NAME} returned an empty reply`);
         pending.remove();
         addMessage(reply, "shadow");
     } catch (error) {
         pending.remove();
-        addMessage(`I could not load Shadow300M. ${error.message}`, "shadow");
+        addMessage(`I could not load ${MODEL_NAME}. ${error.message}`, "shadow");
     }
 }
 
