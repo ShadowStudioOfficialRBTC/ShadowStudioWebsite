@@ -1,7 +1,8 @@
 import { env, pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2/+esm";
 
 const MODEL_PATH = "HuggingFaceTB/SmolLM-135M-Instruct";
-const MODEL_NAME = "SmolLM 135M";
+const MODEL_NAME = "Shadow";
+const SYSTEM_PROMPT = "You are Shadow, the official assistant of Shadow Studios. Shadow Studios is a creative place where innovative ideas are imagined, explored, and built through robotics, software, design, digital art, and experiments. Explain the studio clearly when asked about it. Be thoughtful, concise, curious, and practical. Do not claim to be human or invent facts about Shadow Studios.";
 const ESTIMATED_LOAD_SECONDS = 120;
 const messages = document.querySelector("#messages");
 const form = document.querySelector("#chatForm");
@@ -14,12 +15,8 @@ const loaderTitle = document.querySelector("#loaderTitle");
 const loaderCopy = document.querySelector("#loaderCopy");
 const timeLeft = document.querySelector("#timeLeft");
 const loaderProgress = document.querySelector("#loaderProgress");
-const queueStep = document.querySelector("#queueStep");
-const modelStep = document.querySelector("#modelStep");
-const readyStep = document.querySelector("#readyStep");
 const assetStates = {
     model: document.querySelector("#adapterState"),
-    runtime: document.querySelector("#dataState")
 };
 let generator;
 let loadingPromise;
@@ -41,13 +38,6 @@ function setStatus(text, isReady = false) {
     modelStatus.classList.toggle("is-ready", isReady);
 }
 
-function setLoaderStep(activeStep) {
-    [queueStep, modelStep, readyStep].forEach((step, index) => {
-        step.classList.toggle("is-active", index === activeStep);
-        step.classList.toggle("is-done", index < activeStep);
-    });
-}
-
 function updateCountdown() {
     const elapsed = Math.floor((Date.now() - loadStartedAt) / 1000);
     const remaining = Math.max(0, ESTIMATED_LOAD_SECONDS - elapsed);
@@ -60,16 +50,14 @@ function startLoadingScreen() {
     loadStartedAt = Date.now();
     updateCountdown();
     countdownTimer = window.setInterval(updateCountdown, 1000);
-    loaderTitle.textContent = "You are in the queue";
-    loaderCopy.textContent = "Preparing a secure browser session for the studio model.";
+    loaderTitle.textContent = "Loading Shadow";
+    loaderCopy.textContent = "Preparing your private chat session.";
     loaderProgress.style.width = "6%";
-    setLoaderStep(0);
 }
 
 function showModelLoading() {
     loaderTitle.textContent = "Loading Shadow";
-    loaderCopy.textContent = "Loading the model from this website's local files.";
-    setLoaderStep(1);
+    loaderCopy.textContent = "Preparing Shadow for your conversation.";
 }
 
 function finishLoadingScreen() {
@@ -78,7 +66,6 @@ function finishLoadingScreen() {
     loaderTitle.textContent = "Shadow is ready";
     loaderCopy.textContent = "The chat is live. Your messages run in this browser session.";
     loaderProgress.style.width = "100%";
-    setLoaderStep(2);
     window.setTimeout(() => modelLoader.classList.add("is-hidden"), 700);
 }
 
@@ -86,35 +73,25 @@ async function loadWorkspaceModel(onProgress = () => {}) {
     if (generator) return generator;
     if (loadingPromise) return loadingPromise;
     loadingPromise = (async () => {
-        await new Promise((resolve) => window.setTimeout(resolve, 1400));
-        showModelLoading();
-        onProgress(`Loading ${MODEL_NAME} from local files...`);
-        setStatus(`Loading ${MODEL_NAME}...`);
-        setAssetState("model", "loading", false);
-        setAssetState("runtime", "starting", false);
-        let device = "wasm";
-        if ("gpu" in navigator) {
-            try {
-                const adapter = await navigator.gpu.requestAdapter();
-                if (adapter) device = "webgpu";
-            } catch (error) {
-                device = "wasm";
-            }
+        if ("serviceWorker" in navigator) {
+            await navigator.serviceWorker.ready;
         }
+        showModelLoading();
+        onProgress("Loading Shadow from local files...");
+        setStatus("Loading Shadow...");
+        setAssetState("model", "loading", false);
         generator = await pipeline("text-generation", MODEL_PATH, {
-            device,
             dtype: "q4",
             progress_callback: (progress) => {
                 if (progress.status === "progress" && progress.progress) {
                     const percent = Math.round(progress.progress);
                     loaderProgress.style.width = `${Math.max(6, percent)}%`;
-                    onProgress(`Loading ${MODEL_NAME} from local files... ${percent}%`);
+                    onProgress(`Loading Shadow from local files... ${percent}%`);
                 }
             }
         });
         setAssetState("model", "loaded", true);
-        setAssetState("runtime", device, true);
-        setStatus(`Shadow is ready · ${MODEL_NAME} running in browser (${device})`, true);
+        setStatus("Shadow is ready", true);
         finishLoadingScreen();
         return generator;
     })();
@@ -124,7 +101,7 @@ async function loadWorkspaceModel(onProgress = () => {}) {
         loadingPromise = undefined;
         window.clearInterval(countdownTimer);
         loaderTitle.textContent = `${MODEL_NAME} could not load`;
-        loaderCopy.textContent = "Run download-shadow-model.ps1, then refresh this page.";
+        loaderCopy.textContent = "The local Shadow files could not be loaded. Please refresh and try again.";
         setStatus("Shadow model could not load");
         throw error;
     }
@@ -151,7 +128,7 @@ async function replyTo(prompt) {
         const model = await loadWorkspaceModel((progress) => {
             pending.querySelector("p").textContent = progress;
         });
-        const output = await model(`<|im_start|>system\nYou are Shadow, a helpful AI assistant created by ShadowStudios.<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`, {
+        const output = await model(`<|im_start|>system\n${SYSTEM_PROMPT}<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`, {
             max_new_tokens: 180,
             do_sample: true,
             temperature: 0.7,
