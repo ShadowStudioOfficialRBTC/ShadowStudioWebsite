@@ -24,7 +24,7 @@ self.addEventListener("fetch", (event) => {
         const parts = await Promise.all(responses.map((response) => response.arrayBuffer()));
         return new Response(new Blob(parts, { type: "application/octet-stream" }), {
             headers: {
-            "Content-Length": String(parts.reduce((total, part) => total + part.byteLength, 0)),
+                "Content-Length": String(parts.reduce((total, part) => total + part.byteLength, 0)),
                 "Content-Type": "application/octet-stream"
             }
         });
