@@ -28,5 +28,5 @@ async function loadExperiments() {
         experimentGrid.innerHTML = "<p class=\"loading-state\">Add an experiment folder and list it in exp/experiments.json.</p>";
     }
 }
-
+//took me an entire day for thsi shittt
 loadExperiments();

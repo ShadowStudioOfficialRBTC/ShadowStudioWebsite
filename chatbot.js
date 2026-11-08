@@ -1,4 +1,5 @@
 import { env, pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.2/+esm";
+//ye this main prte for the consta i mma bored as f to make this
 
 const MODEL_PATH = "HuggingFaceTB/SmolLM-135M-Instruct";
 const MODEL_NAME = "Shadow";
@@ -54,7 +55,7 @@ function startLoadingScreen() {
     loaderCopy.textContent = "Preparing your private chat session.";
     loaderProgress.style.width = "6%";
 }
-
+//this took some time fr
 function showModelLoading() {
     loaderTitle.textContent = "Loading Shadow";
     loaderCopy.textContent = "Preparing Shadow for your conversation.";
@@ -174,3 +175,4 @@ clearChat.addEventListener("click", () => {
 
 startLoadingScreen();
 loadWorkspaceModel().catch(() => {});
+//faa ass shit done

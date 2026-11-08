@@ -1,4 +1,5 @@
 const projectGrid = document.querySelector("#projectGrid");
+//yeah more lvl shit
 
 function createProjectCard(project) {
     const card = document.createElement("article");
